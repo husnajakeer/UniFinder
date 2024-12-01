@@ -1,1 +1,1 @@
-# college-viz
+# uniFinder
