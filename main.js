@@ -14,7 +14,7 @@ d3.csv('colleges.csv').then(function(data) {
 
     var debtScale = d3.scaleLinear()
         .domain(d3.extent(data, d => d.debt))
-        .range([0,400]);
+        .range([0,700]);
 
     var earningScale = d3.scaleLinear()
         .domain(d3.extent(data, d => d.earnings))
@@ -27,12 +27,12 @@ d3.csv('colleges.csv').then(function(data) {
 
     svg.append("g")
         .attr("class", "x axis")
-        .attr('transform', 'translate(50, 600)')
+        .attr('transform', 'translate(100, 620)')
         .call(xAxis)
 
     svg.append("g")
         .attr("class", "y axis")
-        .attr('transform', 'translate(50, 10)')
+        .attr('transform', 'translate(100, 20)')
         .call(yAxis)
 
     svg.append("text")
