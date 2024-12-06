@@ -30,13 +30,29 @@ d3.csv('colleges.csv').then(function(data) {
         .attr('transform', 'translate(100, 620)')
         .call(xAxis)
 
+    svg.append("text")
+        .attr("class", "x label")
+        .attr("x", 450)
+        .attr("y", 670)
+        .style("font-size", "20px")
+        .text("Median Debt");
+
     svg.append("g")
         .attr("class", "y axis")
         .attr('transform', 'translate(100, 20)')
         .call(yAxis)
 
     svg.append("text")
-        .attr("transform", 'translate(450, 30)')
-        .text("Debt")
+        .attr("class", "y label")
+        .attr("x", 140)
+        .attr("y", 225)
+        .attr("transform", "rotate(90, 40, 200)")
+        .style("font-size", "20px")
+        .text("Mean Earnings 8 Years after Entry");
+
+    svg.append("text")
+        .attr("transform", 'translate(290, 30)')
+        .text("You'll Earn More than What You Went in Debt for")
+        .style("font-size", "20px");
 
 });
