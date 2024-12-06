@@ -1,19 +1,14 @@
 d3.csv('colleges.csv').then(function(data) {
     data.forEach(d => {
-        d.debt = +d["Median Debt"];
-        d.earnings = +d["Mean Earnings 8 years After Entry"];
+        d.debt = parseFloat(d["Median Debt"]);
+        d.earnings = parseFloat(d["Mean Earnings 8 years After Entry"]);
         d.name = d.Name;
         d.type = d.Control;
         d.region = d.Region;
     })
 
-    function scaleDebt(debt) {
-        return debtScale(debt);
-    }
-
-    function scaleEarnings(earnings) {
-        return earningScale(earnings);
-    }
+    console.log(d3.extent(data, d => d.debt));
+    console.log(d3.extent(data, d => d.earnings));
 
     var debtScale = d3.scaleLinear()
         .domain(d3.extent(data, d => d.debt))
@@ -63,8 +58,8 @@ d3.csv('colleges.csv').then(function(data) {
         .data(data)
         .enter()
         .append("circle")
-        .attr("cx", d => scaleDebt(d.debt))
-        .attr("cy", d => scaleEarnings(d.earnings))
+        .attr("cx", d => debtScale(d.debt))
+        .attr("cy", d => earningScale(d.earnings))
         .attr("r", 5)
         .style("fill", d => d.type === "Public" ? "green" : "purple")
         .style("opacity", 0.7);
