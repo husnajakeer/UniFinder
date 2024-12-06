@@ -1,27 +1,30 @@
 d3.csv('colleges.csv').then(function(data) {
     data.forEach(d => {
-        d.debt = +d["Median Debt"];
-        d.earnings = +d["Mean Earnings 8 years After Entry"];
+        d.debt = parseFloat(d["Median Debt"]);
+        d.earnings = parseFloat(d["Mean Earnings 8 years After Entry"]);
         d.name = d.Name;
         d.type = d.Control;
         d.region = d.Region;
     })
 
-    function scaleDebt(debt) {
-        return debtScale(debt);
-    }
+    console.log(d3.extent(data, d => d.debt));
+    console.log(d3.extent(data, d => d.earnings));
 
-    function scaleEarnings(earnings) {
-        return earningScale(earnings);
-    }
-
-    var debtScale = d3.scaleLinear()
+    /*var debtScale = d3.scaleLinear()
         .domain(d3.extent(data, d => d.debt))
         .range([0,750]);
 
     var earningScale = d3.scaleLinear()
         .domain(d3.extent(data, d => d.earnings))
-        .range([600, 0]);
+        .range([600, 0]);*/
+
+    var debtScale = d3.scaleLinear()
+        .domain([0, 28000])
+        .range([100, 850]);
+
+    var earningScale = d3.scaleLinear()
+        .domain([0, 130000])
+        .range([650, 50]);
 
     // good
     var xAxis = d3.axisBottom(debtScale);
@@ -31,7 +34,7 @@ d3.csv('colleges.csv').then(function(data) {
 
     svg.append("g")
         .attr("class", "x axis")
-        .attr('transform', 'translate(100, 640)')
+        .attr('transform', 'translate(0, 650)')
         .call(xAxis)
 
     svg.append("text")
@@ -43,7 +46,7 @@ d3.csv('colleges.csv').then(function(data) {
 
     svg.append("g")
         .attr("class", "y axis")
-        .attr('transform', 'translate(100, 40)')
+        .attr('transform', 'translate(100, 0)')
         .call(yAxis)
 
     svg.append("text")
@@ -63,8 +66,8 @@ d3.csv('colleges.csv').then(function(data) {
         .data(data)
         .enter()
         .append("circle")
-        .attr("cx", d => scaleDebt(d.debt))
-        .attr("cy", d => scaleEarnings(d.earnings))
+        .attr("cx", d => debtScale(d.debt))
+        .attr("cy", d => earningScale(d.earnings))
         .attr("r", 5)
         .style("fill", d => d.type === "Public" ? "green" : "purple")
         .style("opacity", 0.7);
