@@ -55,4 +55,14 @@ d3.csv('colleges.csv').then(function(data) {
         .text("You'll Earn More than What You Went in Debt for")
         .style("font-size", "20px");
 
+    svg.selectAll("circle")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", d => scaleDebt(d.debt))
+        .attr("cy", d => scaleEarnings(d.earnings))
+        .attr("r", 5)
+        .style("fill", "purple")
+        .style("opacity", 0.7)
+
 });
