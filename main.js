@@ -2,6 +2,9 @@ d3.csv('colleges.csv').then(function(data) {
     data.forEach(d => {
         d.debt = +d["Median Debt"];
         d.earnings = +d["Mean Earnings 8 years After Entry"];
+        d.name = d.Name;
+        d.type = d.Control;
+        d.region = d.Region;
     })
 
     function scaleDebt(debt) {
@@ -14,12 +17,13 @@ d3.csv('colleges.csv').then(function(data) {
 
     var debtScale = d3.scaleLinear()
         .domain(d3.extent(data, d => d.debt))
-        .range([0,700]);
+        .range([0,750]);
 
     var earningScale = d3.scaleLinear()
         .domain(d3.extent(data, d => d.earnings))
         .range([600, 0]);
 
+    // good
     var xAxis = d3.axisBottom(debtScale);
     var yAxis = d3.axisLeft(earningScale);
 
@@ -27,19 +31,19 @@ d3.csv('colleges.csv').then(function(data) {
 
     svg.append("g")
         .attr("class", "x axis")
-        .attr('transform', 'translate(100, 620)')
+        .attr('transform', 'translate(100, 640)')
         .call(xAxis)
 
     svg.append("text")
         .attr("class", "x label")
         .attr("x", 450)
-        .attr("y", 670)
+        .attr("y", 690)
         .style("font-size", "20px")
         .text("Median Debt");
 
     svg.append("g")
         .attr("class", "y axis")
-        .attr('transform', 'translate(100, 20)')
+        .attr('transform', 'translate(100, 40)')
         .call(yAxis)
 
     svg.append("text")
@@ -62,7 +66,7 @@ d3.csv('colleges.csv').then(function(data) {
         .attr("cx", d => scaleDebt(d.debt))
         .attr("cy", d => scaleEarnings(d.earnings))
         .attr("r", 5)
-        .style("fill", "purple")
-        .style("opacity", 0.7)
+        .style("fill", d => d.type === "Public" ? "green" : "purple")
+        .style("opacity", 0.7);
 
 });
