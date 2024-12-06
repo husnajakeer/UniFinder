@@ -1,9 +1,13 @@
-var regions;
 var svg = d3.select('svg');
+
 var debtScale;
 var earningScale;
+var populationScale;
+
 var xAxis;
 var yAxis;
+
+var regions;
 
 function onRegionChange() {
     var select = d3.select('#selectRegion').node();
@@ -21,6 +25,8 @@ d3.csv('colleges.csv').then(function(data) {
         d.name = d.Name;
         d.type = d.Control;
         d.region = d.Region;
+        d.population = d["Undergrad Population"]
+        d.admission_rate = d['Admission Rate']
     })
 
     console.log(d3.extent(data, d => d.debt));
@@ -41,6 +47,10 @@ d3.csv('colleges.csv').then(function(data) {
     earningScale = d3.scaleLinear()
         .domain([0, 130000])
         .range([650, 50]);
+
+    populationScale = d3.scaleLinear()
+        .domain([0, 51000])
+        .range([3, 10]);
 
     // good
     xAxis = d3.axisBottom(debtScale);
@@ -72,8 +82,8 @@ d3.csv('colleges.csv').then(function(data) {
         .text("Mean Earnings 8 Years after Entry");
 
     svg.append("text")
-        .attr("transform", 'translate(290, 30)')
-        .text("You'll Earn More than What You Went in Debt for")
+        .attr("transform", 'translate(180, 30)')
+        .text("College Median Debt vs Mean Earnings 8 Years after Entry by Region")
         .style("font-size", "20px");   
 
     filterRegions('all-regions');
@@ -101,11 +111,10 @@ function filterRegions(region) {
         .attr("cy", d => earningScale(d.earnings))
         .attr("r", 5)
         .style("fill", d => d.type === "Public" ? "green" : "purple")
-        .style("opacity", 0.7);
 
     circles.attr("cx", d => debtScale(d.debt))
         .attr("cy", d => earningScale(d.earnings))
-        .attr("r", 5)
+        .attr("r", d => populationScale(d.population));
 
     circles.exit().remove()
 
