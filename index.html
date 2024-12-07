@@ -7,23 +7,39 @@
 </head>
 <body>
     <div id="main">
-        <svg width="900" height="700" style="border: 1px solid #777;">
-        </svg>
-        <div>
-            <label for="selectRegion">Show: </label>
-            <select class="dropdown" id="selectRegion" onchange="onRegionChange()">
-                <option selected value="all-regions">All Regions</option>
-                <option value="Far West">Far West</option>
-                <option value="Great Lakes">Great Lakes</option>
-                <option value="Great Plains">Great Plains</option>
-                <option value="Mid-Atlantic">Mid-Atlantic</option>
-                <option value="New England">New England</option>
-                <option value="Outlying Areas">Outlying Areas</option>
-                <option value="Rocky Mountains">Rocky Mountains</option>
-                <option value="Southeast">Southeast</option>
-                <option value="Southwest">Southwest</option>
-            </select>
-        </div> 
+        <div class = "chart-container">
+            <svg width="900" height="700" style="border: 1px solid #777;">
+            </svg>
+            <div>
+                <label for="selectRegion">Select your region of choice: </label>
+                <select class="dropdown" id="selectRegion" onchange="onRegionChange()">
+                    <option selected value="all-regions">All Regions</option>
+                    <option value="Far West">Far West</option>
+                    <option value="Great Lakes">Great Lakes</option>
+                    <option value="Great Plains">Great Plains</option>
+                    <option value="Mid-Atlantic">Mid-Atlantic</option>
+                    <option value="New England">New England</option>
+                    <option value="Outlying Areas">Outlying Areas</option>
+                    <option value="Rocky Mountains">Rocky Mountains</option>
+                    <option value="Southeast">Southeast</option>
+                    <option value="Southwest">Southwest</option>
+                </select>
+            </div>
+        </div>
+        <div id = "legend">
+            <h3><u>Legend</u></h3>
+            <div class="legend-item">
+                <div class="legend-text">Public:</div>
+                <div class="legend-circle" style="background-color: green;"></div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-text">Private:</div>
+                <div class="legend-circle" style="background-color: purple;"></div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-text">Note: The sizes of the circles are scaled based on the college's undergraduate population size.</div>
+            </div>
+        </div>
     </div>
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>

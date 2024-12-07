@@ -50,7 +50,7 @@ d3.csv('colleges.csv').then(function(data) {
 
     populationScale = d3.scaleLinear()
         .domain([0, 51000])
-        .range([3, 13]);
+        .range([5, 15]);
 
     // good
     xAxis = d3.axisBottom(debtScale);
@@ -66,7 +66,7 @@ d3.csv('colleges.csv').then(function(data) {
         .attr("x", 450)
         .attr("y", 690)
         .style("font-size", "20px")
-        .text("Median Debt");
+        .text("Median Debt ($)");
 
     svg.append("g")
         .attr("class", "y axis")
@@ -79,11 +79,11 @@ d3.csv('colleges.csv').then(function(data) {
         .attr("y", 225)
         .attr("transform", "translate(-190, 460)rotate(-90)")
         .style("font-size", "20px")
-        .text("Mean Earnings 8 Years after Entry");
+        .text("Mean Earnings 8 Years after Entry ($)");
 
     svg.append("text")
         .attr("transform", 'translate(180, 30)')
-        .text("College Median Debt vs Mean Earnings 8 Years after Entry by Region")
+        .text("US College's Median Debt vs Mean Earnings 8 Years after Entry by Region")
         .style("font-size", "20px");   
 
     filterRegions('all-regions');
