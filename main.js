@@ -50,7 +50,7 @@ d3.csv('colleges.csv').then(function(data) {
 
     populationScale = d3.scaleLinear()
         .domain([0, 51000])
-        .range([3, 10]);
+        .range([3, 13]);
 
     // good
     xAxis = d3.axisBottom(debtScale);
@@ -90,6 +90,15 @@ d3.csv('colleges.csv').then(function(data) {
 
 });
 
+var tooltip = d3.select('body').append('div')
+    .attr('class', 'tooltip')
+    .style('position', 'absolute')
+    .style('background-color', 'white')
+    .style('border', '1px solid black')
+    .style('padding', '5px')
+    .style('border-radius', '5px')
+    .style('opacity', 0);
+
 function filterRegions(region) {
     var filteredRegions;
 
@@ -100,6 +109,12 @@ function filterRegions(region) {
         filteredRegions = regions.filter(d => d.region === region);
     }
 
+    filteredRegions = filteredRegions.filter(d =>
+        !isNaN(d.debt) &&
+        !isNaN(d.earnings) &&
+        d.admission_rate !== 0
+    );
+
     const circles = svg.selectAll("circle")
         .data(filteredRegions, function(d) {
             return d.region
@@ -109,8 +124,22 @@ function filterRegions(region) {
         .append("circle")
         .attr("cx", d => debtScale(d.debt))
         .attr("cy", d => earningScale(d.earnings))
-        .attr("r", 5)
+        .attr("r", d => populationScale(d.population))
         .style("fill", d => d.type === "Public" ? "green" : "purple")
+        .style("opacity", 0.6)
+        .on("mouseover", function(d) {
+            tooltip.html(`<strong>${d.name}</strong><br>
+                           Median Debt: $${d.debt.toLocaleString()}<br>
+                           Mean Earnings: $${d.earnings.toLocaleString()}<br>
+                           Admission Rate: ${(d.admission_rate * 100).toFixed(2)}%<br>`)
+                    .style('left', (d3.event.pageX + 5) + 'px')
+                    .style('top', (d3.event.pageY + 5) + 'px')
+                    .style("opacity", 1);
+                    //console.log("Mouse Position:", d3.event.pageX, d3.event.pageY); //debugging ignore
+        })
+        .on("mouseout", function() {
+            tooltip.style("opacity", 0); //tooltip not visible
+        })
 
     circles.attr("cx", d => debtScale(d.debt))
         .attr("cy", d => earningScale(d.earnings))
