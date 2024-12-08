@@ -4,10 +4,20 @@ var debtScale;
 var earningScale;
 var populationScale;
 
+// for bar chart
+var raceScale;
+var percentScale;
+const races = ["White", "Black", "Asian", "Hispanic", "American Indian", "Pacific Islander", "Biracial"];
+
+// svg for the bar chart
+var bar_chart = d3.select("#race-chart").select("#chart-svg");
+
 var xAxis;
 var yAxis;
 
 var regions;
+
+var college_data;
 
 function onRegionChange() {
     var select = d3.select('#selectRegion').node();
@@ -15,8 +25,9 @@ function onRegionChange() {
     filterRegions(region);
 }
 
-d3.csv('colleges.csv').then(function(data) {
 
+d3.csv('colleges.csv').then(function(data) {
+    college_data = data;
     regions = data;
 
     data.forEach(d => {
@@ -25,8 +36,17 @@ d3.csv('colleges.csv').then(function(data) {
         d.name = d.Name;
         d.type = d.Control;
         d.region = d.Region;
-        d.population = d["Undergrad Population"]
-        d.admission_rate = d['Admission Rate']
+        d.population = d["Undergrad Population"];
+        d.admission_rate = d['Admission Rate'];
+        d.tuition = d['Average Cost'];
+
+        d.white = parseFloat(d['% White']);
+        d.black = parseFloat(d['% Black']);
+        d.hispanic = parseFloat(d['% Hispanic']);
+        d.asian = parseFloat(d['% Asian']);
+        d.american_indian = parseFloat(d['% American Indian']);
+        d.pacific_islander = parseFloat(d['% Pacific Islander']);
+        d.biracial = parseFloat(d['% Biracial']);
     })
 
     console.log(d3.extent(data, d => d.debt));
@@ -52,9 +72,23 @@ d3.csv('colleges.csv').then(function(data) {
         .domain([0, 51000])
         .range([5, 15]);
 
+
+    // for the bar chart
+    raceScale = d3.scaleBand()
+        .domain(races)
+        .range([0, 490]);
+
+    percentScale = d3.scaleLinear()
+        .domain([0, 100])
+        .range([400, 0]);
+    
     // good
     xAxis = d3.axisBottom(debtScale);
     yAxis = d3.axisLeft(earningScale);
+
+    // for the bar chart
+    xAxisBar = d3.axisBottom(raceScale);
+    yAxisBar = d3.axisLeft(percentScale);
 
     svg.append("g")
         .attr("class", "x axis")
@@ -85,6 +119,15 @@ d3.csv('colleges.csv').then(function(data) {
         .attr("transform", 'translate(180, 30)')
         .text("US College's Median Debt vs Mean Earnings 8 Years after Entry by Region")
         .style("font-size", "20px");   
+
+    bar_chart.append("g")
+        .attr("transform", "translate(45, 450)")
+        .call(xAxisBar)
+
+    bar_chart.append("g")
+        .attr("transform", "translate(45, 50)")
+        .call(yAxisBar)
+
 
     filterRegions('all-regions');
 
@@ -131,20 +174,46 @@ function filterRegions(region) {
             tooltip.html(`<strong>${d.name}</strong><br>
                            Median Debt: $${d.debt.toLocaleString()}<br>
                            Mean Earnings: $${d.earnings.toLocaleString()}<br>
-                           Admission Rate: ${(d.admission_rate * 100).toFixed(2)}%<br>`)
+                           Admission Rate: ${(d.admission_rate * 100).toFixed(2)}%<br>
+                           Average Cost: $${d.tuition.toLocaleString()}<br`)
                     .style('left', (d3.event.pageX + 5) + 'px')
                     .style('top', (d3.event.pageY + 5) + 'px')
-                    .style("opacity", 1);
+                    .style("opacity", 1)
+                    .style("font-size", "14px")
                     //console.log("Mouse Position:", d3.event.pageX, d3.event.pageY); //debugging ignore
         })
         .on("mouseout", function() {
             tooltip.style("opacity", 0); //tooltip not visible
         })
+        .on("click", function(d) {
+            updateBarChart(d.name); //tooltip not visible
+        })
+
 
     circles.attr("cx", d => debtScale(d.debt))
         .attr("cy", d => earningScale(d.earnings))
         .attr("r", d => populationScale(d.population));
 
     circles.exit().remove()
+
+}
+
+function updateBarChart(college_name) {
+
+    // find the college in the data
+    const college = college_data.find(d => d.name === college_name);
+    console.log(college);
+    console.log(college['% ' + races[0]] * 100);
+
+    // filter race breakdown
+    bar_chart.data(races);
+
+    bar_chart.enter()
+        .append("rect")
+        .attr("x", 10)
+        .attr("y", 20)
+        .attr("width", 30)
+        .attr("height", d => 400 - percentScale(college[`% ${d}`]))
+        .style("fill", "darkblue");
 
 }
