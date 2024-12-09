@@ -235,7 +235,7 @@ function updateBarChart(college_name) {
 
     bars.enter()
         .append("rect")
-        .attr("x", (a, b) => b * 71 + 65)
+        .attr("x", (a, b) => b * 71 + 71)
         .attr("y", d => percentScale(raceBreakdown[d]*100)+50)
         .attr("width", 30)
         .attr("height", d => chartHeight - percentScale(raceBreakdown[d]*100))
