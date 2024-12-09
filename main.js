@@ -184,13 +184,11 @@ function filterRegions(region) {
                     .style("opacity", 1)
                     .style("font-size", "14px")
                     //console.log("Mouse Position:", d3.event.pageX, d3.event.pageY); //debugging ignore
+            curr_name = d.name
+            updateBarChart(d.name);
         })
         .on("mouseout", function() {
             tooltip.style("opacity", 0); //tooltip not visible
-        })
-        .on("click", function(d) {
-            curr_name = d.name;
-            updateBarChart(d.name);
         })
 
 
