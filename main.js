@@ -40,7 +40,7 @@ d3.csv('colleges.csv').then(function(data) {
         d.region = d.Region;
         d.population = d["Undergrad Population"];
         d.admission_rate = d['Admission Rate'];
-        d.tuition = d['Average Cost'];
+        d.tuition = parseFloat(d['Average Cost']);
     })
 
     console.log(d3.extent(data, d => d.debt));
