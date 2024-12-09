@@ -110,9 +110,9 @@ d3.csv('colleges.csv').then(function(data) {
         .text("Mean Earnings 8 Years after Entry ($)");
 
     svg.append("text")
-        .attr("transform", 'translate(140, 30)')
+        .attr("transform", 'translate(200, 40)')
         .text("US College's Median Debt vs Mean Earnings 8 Years after Entry by Region")
-        .style("font-size", "20px");   
+        .style("font-size", "16px");   
 
     bar_chart.append("g")
         .attr("transform", "translate(50, 450)")
