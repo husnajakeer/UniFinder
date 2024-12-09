@@ -60,3 +60,8 @@ text.title {
     font-size: 14px;
     fill: #333;
 }
+
+.chart-container {
+    display: flex;
+    flex-direction: column;
+}
