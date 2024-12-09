@@ -73,7 +73,7 @@ d3.csv('colleges.csv').then(function(data) {
         .range([0, 500]);
 
     percentScale = d3.scaleLinear()
-        .domain([0, 1])
+        .domain([0, 100])
         .range([chartHeight, 7]);
     
     // good
@@ -238,9 +238,9 @@ function updateBarChart(college_name) {
     bars.enter()
         .append("rect")
         .attr("x", (a, b) => b * 71 + 65)
-        .attr("y", d => percentScale(raceBreakdown[d])+50)
+        .attr("y", d => percentScale(raceBreakdown[d]*100)+50)
         .attr("width", 30)
-        .attr("height", d => chartHeight - percentScale(raceBreakdown[d]))
+        .attr("height", d => chartHeight - percentScale(raceBreakdown[d]*100))
         .style("fill", "darkblue")
         .style("opacity", 0.7);
 
