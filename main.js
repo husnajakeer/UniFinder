@@ -11,6 +11,7 @@ const races = ["White", "Black", "Asian", "Hispanic", "American Indian", "Pacifi
 
 // svg for the bar chart
 var bar_chart = d3.select("#race-chart").select("#chart-svg");
+var chartHeight = 400;
 
 var xAxis;
 var yAxis;
@@ -18,6 +19,7 @@ var yAxis;
 var regions;
 
 var college_data;
+var curr_name = "Selected College";
 
 function onRegionChange() {
     var select = d3.select('#selectRegion').node();
@@ -39,14 +41,6 @@ d3.csv('colleges.csv').then(function(data) {
         d.population = d["Undergrad Population"];
         d.admission_rate = d['Admission Rate'];
         d.tuition = d['Average Cost'];
-
-        d.white = parseFloat(d['% White']);
-        d.black = parseFloat(d['% Black']);
-        d.hispanic = parseFloat(d['% Hispanic']);
-        d.asian = parseFloat(d['% Asian']);
-        d.american_indian = parseFloat(d['% American Indian']);
-        d.pacific_islander = parseFloat(d['% Pacific Islander']);
-        d.biracial = parseFloat(d['% Biracial']);
     })
 
     console.log(d3.extent(data, d => d.debt));
@@ -76,11 +70,11 @@ d3.csv('colleges.csv').then(function(data) {
     // for the bar chart
     raceScale = d3.scaleBand()
         .domain(races)
-        .range([0, 490]);
+        .range([0, 500]);
 
     percentScale = d3.scaleLinear()
-        .domain([0, 100])
-        .range([400, 0]);
+        .domain([0, 1])
+        .range([chartHeight, 7]);
     
     // good
     xAxis = d3.axisBottom(debtScale);
@@ -116,17 +110,26 @@ d3.csv('colleges.csv').then(function(data) {
         .text("Mean Earnings 8 Years after Entry ($)");
 
     svg.append("text")
-        .attr("transform", 'translate(180, 30)')
+        .attr("transform", 'translate(140, 30)')
         .text("US College's Median Debt vs Mean Earnings 8 Years after Entry by Region")
         .style("font-size", "20px");   
 
     bar_chart.append("g")
-        .attr("transform", "translate(45, 450)")
+        .attr("transform", "translate(50, 450)")
         .call(xAxisBar)
 
     bar_chart.append("g")
-        .attr("transform", "translate(45, 50)")
+        .attr("transform", "translate(50, 50)")
         .call(yAxisBar)
+
+    bar_chart.append("text")
+        .attr("transform", 'translate(260, 490)')
+        .text("Race")
+
+    bar_chart.append("text")
+        .attr("transform", "translate(15, 300)rotate(-90)")
+        .style("font-size", "14px")
+        .text("Percentage of Race (%)");
 
 
     filterRegions('all-regions');
@@ -186,7 +189,8 @@ function filterRegions(region) {
             tooltip.style("opacity", 0); //tooltip not visible
         })
         .on("click", function(d) {
-            updateBarChart(d.name); //tooltip not visible
+            curr_name = d.name;
+            updateBarChart(d.name);
         })
 
 
@@ -199,21 +203,54 @@ function filterRegions(region) {
 }
 
 function updateBarChart(college_name) {
-
+    console.log("curr name: " + curr_name);
     // find the college in the data
     const college = college_data.find(d => d.name === college_name);
     console.log(college);
-    console.log(college['% ' + races[0]] * 100);
+    // console.log(races[0] + ": " + college['% ' + races[0]]);
+    // console.log(races[1] + ": " + college['% ' + races[1]]);
+    // console.log(races[2] + ": " + college['% ' + races[2]]);
+    // console.log(races[3] + ": " + college['% ' + races[3]]);
+    // console.log(races[4] + ": " + college['% ' + races[4]]);
+    // console.log(races[5] + ": " + college['% ' + races[5]]);
+    // console.log(races[6] + ": " + college['% ' + races[6]]);
 
+    
+    const data_races = ["% White", "% Black", "% Asian", "% Hispanic", "% American Indian", "% Pacific Islander", "% Biracial"];
+    
     // filter race breakdown
-    bar_chart.data(races);
+    const raceBreakdown = Object.keys(college)
+        .filter(race => data_races.includes(race))
+        .reduce((filtered, race) => {
+            filtered[race] = college[race];
+            return filtered;
+        }, {});
 
-    bar_chart.enter()
+    console.log(raceBreakdown);
+    
+    bar_chart.selectAll("rect").remove();
+
+    bar_chart.select(".chart-title").remove();
+        
+    const bars = bar_chart.selectAll("rect")
+        .data(Object.keys(raceBreakdown));
+
+    bars.enter()
         .append("rect")
-        .attr("x", 10)
-        .attr("y", 20)
+        .attr("x", (a, b) => b * 71 + 65)
+        .attr("y", d => percentScale(raceBreakdown[d])+50)
         .attr("width", 30)
-        .attr("height", d => 400 - percentScale(college[`% ${d}`]))
-        .style("fill", "darkblue");
+        .attr("height", d => chartHeight - percentScale(raceBreakdown[d]))
+        .style("fill", "darkblue")
+        .style("opacity", 0.7);
 
+    bars.exit().remove();
+
+    bar_chart.append("text")
+        .attr("class", "chart-title")
+        .attr("transform", 'translate(50, 30)')
+        .text(`Percentage Breakdown of Race at ${curr_name}`)
+        .style("font-size", "14px")
+
+    bar_chart.select(".chart-title").exit().remove();
 }
